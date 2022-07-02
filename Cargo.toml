@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+	"wondrium_lib",
+	"wondrium_cli",
+	"wondrium_yew",
+	"wondrium_tauri",
+]

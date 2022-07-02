@@ -1,0 +1,14 @@
+[package]
+name = "wondrium_yew"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+yew = "0.19"
+web-sys = "0.3.58"
+wasm-bindgen = { version = "0.2.81", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.31"
+js-sys = "0.3.58"
+serde = { version = "1.0.138", features = ["derive"] }
+wondrium_lib = { path = "../wondrium_lib" }
+gloo-console = "0.2.1"
