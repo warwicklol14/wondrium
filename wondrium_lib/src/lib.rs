@@ -10,7 +10,7 @@ pub mod utils;
 pub mod downloader;
 
 
-#[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
 pub struct Course {
     pub course_name: String,
     pub course_id: u32,
@@ -24,7 +24,7 @@ pub struct Course {
     pub lectures: Vec<Lecture>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
 pub struct Lecture {
     pub lecture_video_filename: String,
     pub lecture_videodownload_filename: String,
