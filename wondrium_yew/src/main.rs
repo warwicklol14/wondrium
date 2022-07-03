@@ -7,7 +7,7 @@ mod components;
 mod backend;
 
 use components::ui::InputBar;
-use components::ui::TwoColList;
+use components::CourseContainer;
 
 use wondrium_lib::Course;
 
@@ -17,36 +17,50 @@ fn main() {
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let link = use_state(|| String::new());
-    let course = use_state_eq(|| Course::default());
+    let course_state = use_state_eq(|| Course::default());
+
+    let get_course_from_backend = {
+        move |course_link: String, course_state: UseStateHandle<Course>| {
+            wasm_bindgen_futures::spawn_local(async move {
+                if course_link.contains("wondrium.com") {
+                    let course_g = backend::get_course(course_link).await;
+                    course_state.set(course_g);
+                    log!(JsValue::from_serde(&*course_state).unwrap());
+                }
+            });
+        }
+    };
 
     let onchange = {
-        let course_link = link.clone();
-        let course = course.clone();
-        wasm_bindgen_futures::spawn_local(async move {
-            if course_link.contains("wondrium.com") {
-                let course_g = backend::get_course((*course_link).clone()).await;
-                course.set(course_g);
-                log!(JsValue::from_serde(&*course).unwrap());
-            }
-        });
-        let link = link.clone();
+        let course_state = course_state.clone();
         Callback::from(move |e: Event| {
             let input_el: HtmlInputElement = e.target_unchecked_into();
-            link.set(input_el.value())
+            let course_link = input_el.value();
+            get_course_from_backend(course_link, course_state.clone());
         })
     };
 
-    html! {
-        <>
-            <div class="max-w-8xl py-2 mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="max-w-4xl mx-auto">
-                        <InputBar {onchange} />
-                        //<MediaCollection media_link={(*link).clone()}/>
-                        <p>{&course.course_name} </p>
-                        <TwoColList />
-                </div>
-            </div>
-        </>
+    let play_lecture = {
+        Callback::from(|lecture_name: String| {
+            wasm_bindgen_futures::spawn_local(async move {
+                backend::play_lecture(lecture_name).await;
+            });
+        })
+    };
+
+    if course_state.course_id != 0 {
+        html! {
+            <>
+                <InputBar {onchange} />
+                <CourseContainer {play_lecture} course={(*course_state).clone() }/>
+            </>
+        }
+    }
+    else {
+        html! {
+            <>
+                <InputBar {onchange} />
+            </>
+        }
     }
 }
