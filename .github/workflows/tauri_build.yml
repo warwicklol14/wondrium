@@ -60,15 +60,18 @@ jobs:
         version: 'latest'
     - name: install tailwind-cli
       run: npm install -g tailwindcss
-    - name: add npm path (windows only)
+    - name: add npm path and build yew app (windows only)
       if: matrix.platform == 'windows-latest'
-      run: $env:Path += Join-Path -Path $env:APPDATA -ChildPath "npm"
+      run: |
+        $env:Path += Join-Path -Path $env:APPDATA -ChildPath "npm"
+        cd wondrium_yew && trunk build
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
       run: |
         sudo apt-get update
         sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
     - name: build yew app
+      if: matrix.platform == 'ubuntu-latest' || matrix.platform == 'macos-latest'
       run: cd wondrium_yew && trunk build
     - uses: tauri-apps/tauri-action@v0
       env:
