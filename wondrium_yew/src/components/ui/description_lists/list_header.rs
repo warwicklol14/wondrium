@@ -10,7 +10,7 @@ pub struct ListHeaderProps {
 pub fn list_header(props: &ListHeaderProps) -> Html {
     html! {
            <>
-    <div class="py-5">
+    <div class="pb-4">
      <h3 class="text-lg leading-6 font-medium text-gray-900">
       {&props.title}
      </h3>
