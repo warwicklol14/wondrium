@@ -60,6 +60,9 @@ jobs:
         version: 'latest'
     - name: install tailwind-cli
       run: npm install tailwindcss
+    - name: fix npm path (windows only)
+      if: matrix.platform == 'windows-latest'
+      run: ${{ $env:Path += "%appdata\npm" }}
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
       run: |
