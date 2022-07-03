@@ -62,7 +62,7 @@ jobs:
       run: npm install -g tailwindcss
     - name: add npm path (windows only)
       if: matrix.platform == 'windows-latest'
-      run: "$env:Path += $env:APPDATA\npm"
+      run: $env:Path += $env:APPDATA -ChildPath "npm"
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
       run: |
