@@ -25,3 +25,17 @@ pub async fn get_course(course_link: String) -> Course {
     let course = invoke_tauri("get_course", course_link_js).await;
     JsValue::into_serde(&course).unwrap()
 }
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct PlayLectureCommandInput {
+    lecture_name: String
+}
+
+pub async fn play_lecture(lecture_name: String) {
+    let play_lecture_command_input = PlayLectureCommandInput {
+        lecture_name
+    };
+    let lecture_name_js = JsValue::from_serde(&play_lecture_command_input).unwrap();
+    invoke_tauri("play_lecture", lecture_name_js).await;
+}
