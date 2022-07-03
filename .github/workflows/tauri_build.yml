@@ -16,7 +16,8 @@ jobs:
           toolchain: stable
       - name: get version
         run: |
-          echo  ${{ '"PACKAGE_VERSION=$(cd wondrium_tauri && cargo pkgid | cut -d# -f2 | cut -d: -f2)" >> $GITHUB_ENV' }}
+          cargo install cargo-get
+          echo  "PACKAGE_VERSION=$(cd wondrium_tauri && cargo get version)" >> $GITHUB_ENV
       - name: create release
         id: create-release
         uses: actions/github-script@v6
