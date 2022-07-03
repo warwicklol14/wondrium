@@ -1,7 +1,7 @@
 use select::document::Document;
 use select::predicate::Attr;
 
-use super::constants::*;
+use super::super::constants::*;
 
 pub fn scrape_course_id_from_html(html: &str) -> u32 {
         let document = Document::from(html);

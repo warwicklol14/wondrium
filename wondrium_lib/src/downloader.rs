@@ -1,10 +1,9 @@
 use super::Course;
 
 mod network;
-mod constants;
 mod scraper;
 
-use constants::*;
+use super::constants::*;
 
 pub struct WondriumDownloader {
     pub course: Course,
