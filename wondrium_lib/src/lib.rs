@@ -4,6 +4,9 @@ use serde::{Serialize, Deserialize};
 pub mod constants;
 
 #[cfg(not(target_arch = "wasm32"))]
+pub mod utils;
+
+#[cfg(not(target_arch = "wasm32"))]
 pub mod downloader;
 
 
