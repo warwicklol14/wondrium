@@ -15,7 +15,8 @@ jobs:
         with:
           toolchain: stable
       - name: get version
-        run: echo ${{ 'PACKAGE_VERSION=$(cd wondrium_tauri && cargo pkgid | cut -d# -f2 | cut -d":" -f2)' }} >> $GITHUB_ENV
+        run: |
+          echo  "PACKAGE_VERSION=$(cd wondrium_tauri && cargo pkgid | cut -d# -f2 | cut -d: -f2)" >> $GITHUB_ENV
       - name: create release
         id: create-release
         uses: actions/github-script@v6
@@ -57,7 +58,7 @@ jobs:
       with:
         version: 'latest'
     - name: install tailwind-cli
-      run: npm install -g tailwindcss
+      run: npm install tailwindcss
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
       run: |
