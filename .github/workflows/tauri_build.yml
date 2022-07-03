@@ -63,7 +63,8 @@ jobs:
     - name: add npm path and build yew app (windows only)
       if: matrix.platform == 'windows-latest'
       run: |
-        $env:Path += Join-Path -Path $env:APPDATA -ChildPath "npm"
+        $npm_path = Join-Path -Path $env:APPDATA -ChildPath "npm"
+        npm config set prefix $npm_path
         cd wondrium_yew && trunk build
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
