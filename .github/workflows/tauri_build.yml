@@ -3,7 +3,7 @@ name: 'Tauri Build Artifacts'
 on:
   push
 
-jobs:
+jobs:  
   create-release:
     runs-on: ubuntu-latest
     outputs:
@@ -11,13 +11,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - name: setup node
+        uses: actions/setup-node@v1
         with:
-          toolchain: stable
+          node-version: 18
       - name: get version
-        run: |
-          cargo install cargo-get
-          echo  "PACKAGE_VERSION=$(cd wondrium_tauri && cargo get version)" >> $GITHUB_ENV
+        run: echo "PACKAGE_VERSION=$(node -p "require('./wondrium_tauri/tauri.conf.json').package.version")" >> $GITHUB_ENV
       - name: create release
         id: create-release
         uses: actions/github-script@v6
@@ -36,7 +35,7 @@ jobs:
             return data.id
 
   build-tauri:
-    needs: create-release
+    needs: [create-release]
     strategy:
       fail-fast: false
       matrix:
@@ -50,30 +49,35 @@ jobs:
       with:
         toolchain: stable
         target: wasm32-unknown-unknown
-    - name: install node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
     - name: install trunk
       uses: jetli/trunk-action@v0.1.0
       with:
         version: 'latest'
-    - name: install tailwind-cli
-      run: npm install -g tailwindcss
-    - name: add npm path and build yew app (windows only)
+    - name: install tailwind-cli and build yew app (windows only)
       if: matrix.platform == 'windows-latest'
       run: |
-        $npm_path = Join-Path -Path $env:APPDATA -ChildPath "npm"
-        npm config set prefix $npm_path
+        Invoke-WebRequest -OutFile tailwindcss.exe https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-windows-x64.exe
+        mv tailwindcss-windows-x64.exe wondrium_yew/tailwindcss.exe
         cd wondrium_yew && trunk build
+    - name: install tailwind-cli and build yew app (ubuntu only)
+      if: matrix.platform == 'ubuntu-latest'
+      run: |
+       curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+       chmod +x tailwindcss-linux-x64
+       mv tailwindcss-linux-x64 wondrium_yew/tailwindcss
+       cd wondrium_yew && trunk build
+    - name: install tailwind-cli and build yew app (macos only)
+      if: matrix.platform == 'macos-latest'
+      run: |
+       curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-x64
+       chmod +x tailwindcss-macos-x64
+       mv tailwindcss-macos-x64 wondrium_yew/tailwindcss
+       cd wondrium_yew && trunk build
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
       run: |
         sudo apt-get update
         sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
-    - name: build yew app
-      if: matrix.platform == 'ubuntu-latest' || matrix.platform == 'macos-latest'
-      run: cd wondrium_yew && trunk build
     - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +86,7 @@ jobs:
 
   publish-release:
     runs-on: ubuntu-latest
-    needs: [ create-release, build-tauri ]
+    needs: [ create-release, build-tauri]
 
     steps:
       - name: publish release
