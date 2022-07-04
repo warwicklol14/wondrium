@@ -7,5 +7,5 @@
 # typing "echo Hello Trunk!" right at the start of the build process (even before the HTML file
 # is read). By default, the command is spawned directly and no shell is used.
 stage = "pre_build"
-command = "tailwindcss"
+command = "./tailwindcss"
 command_arguments = ["-o", "tailwind.css"]
