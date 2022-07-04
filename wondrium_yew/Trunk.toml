@@ -8,4 +8,4 @@
 # is read). By default, the command is spawned directly and no shell is used.
 stage = "pre_build"
 command = "./tailwindcss"
-command_arguments = ["-o", "tailwind.css"]
+command_arguments = ["-o", "./tailwind.css"]
