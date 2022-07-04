@@ -57,7 +57,7 @@ jobs:
       if: matrix.platform == 'windows-latest'
       run: |
         Invoke-WebRequest -OutFile tailwindcss.exe https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-windows-x64.exe
-        mv tailwindcss-windows-x64.exe wondrium_yew/tailwindcss.exe
+        mv tailwindcss.exe wondrium_yew/tailwindcss.exe
         cd wondrium_yew && trunk build
     - name: install tailwind-cli and build yew app (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
